@@ -1,0 +1,99 @@
+﻿@model List<UserFamilyInfo>
+@{
+    Layout = "_userLayout";
+}
+<style>
+   
+    .table-responsive {
+        margin-top: 50px;
+        max-width: 100%;
+        overflow-x: auto;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        
+        .table-responsive table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+        }
+
+        
+        .table-responsive th {
+            background-color: #0078D7;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 16px;
+            border-bottom: 2px solid #dddddd;
+        }
+
+        
+        .table-responsive td {
+            padding: 12px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        
+        .table-responsive tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        
+        .table-responsive tbody tr:hover {
+            background-color: #e6f7ff;
+        }
+
+        
+        .table-responsive td:last-child {
+            color: #0078D7;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+
+            .table-responsive td:last-child:hover {
+                color: #0056a3;
+                text-decoration: underline;
+            }
+</style>
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Date of birth</th>
+                <th>BloodGroup</th>
+                <th>PhoneNumber</th>
+                <th>Address</th>
+                <th>Sugar</th>
+                <th>MedicationAllergy</th>
+                <th>HealthInsurance</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var entry in Model)
+            {
+                <tr>
+                    <td>@entry.FullName</td>
+                    <td>@entry.DOB</td>
+                    <td>@entry.BloodGroup</td>
+                    <td>@entry.PhoneNumber</td>
+                    <td>@entry.Address</td>
+                    <td>@entry.Sugar</td>
+                    <td>@entry.MedicationAllergy</td>
+                    <td>@entry.HealthInsurance</td>
+                    <td> <a asp-controller="UserApp" asp-action="Edit" asp-route-id="@entry.Id">Edit</a></td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,104 @@
+﻿@using UsersApp;
+
+@{
+    ViewData["Title"] = "Home Page";
+
+    
+}
+@* <iframe width="100%" height="600" src="http://127.0.0.1:5500/" title="3D odel">  </iframe>  *@
+
+<div class="page-1">
+    <h1 class="animate fade-up"> VOISE HELP RECORGANIZATION SYSTEM</h1>
+    <div class="container">
+        <div class="text-area">
+            <p>
+                Stay safe with our AI-powered safety system — your silent guardian.
+                Just speak, and our smart voice recognition will instantly respond, providing quick and accurate assistance inany emergency.
+                Fast, reliable, and always there when you need it.
+            </p>
+            <a class="btn" asp-area="" asp-controller="UserApp" asp-action="Index">START</a>
+        </div>
+        <div class="image-area">
+            <img src="~/images/modile.png" alt="Mobile Google Map image " srcset="">
+        </div>
+    </div>
+
+</div>
+<div class="page-2 pagesize">
+    <h1 class="animate">About Our Facility</h1>
+    <div class="container-2">
+        <div class="image-area animate">
+            <img src="~/images/ambulance.jpg" alt="Mobile Google Map image " srcset="">
+        </div>
+        <div class="text-area animate">
+            
+            <ul>
+                <li>
+                    <h1>Automated Assistance</h1>
+                    <p>
+                        Voice activation provides
+                        immediate contact. The system
+                        connects victims to emergency
+                        services. No manual action is
+                        required.
+                    </p>
+                </li>
+                <li>
+                    <h1>Rapid Response</h1>
+                    <p>
+                        Instant alerts with location data are
+                        sent. Help arrives faster,
+                        significantly improving outcomes.
+                    </p>
+                </li>
+                <li>
+                    <h1>Hands-Free Operation</h1>
+                    <p>
+                        Voice commands work even with
+                        severe injuries. This ensures help is
+                        always accessible to the user in
+                        need.
+                    </p>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+<div class="page-3 pagesize fade-up animate">
+    <div class="card-box animate">
+        <img src="~/images/mick.png" alt="AI Assistant">
+        <p>When the user says "help me," the AI will activate, start learning the user's commands, and respond with "How can I help you?" If the user says "help" three times, the AI will start performing its job, providing assistance automatically. This system works hands-free.</p>
+    </div>
+    <div class="card-box animate">
+        <img src="~/images/hardware.png" alt="Hardware Requirements">
+        <p>This system requires Android 7. It is lightweight, works both online and offline, and functions in the background.</p>
+    </div>
+    <div class="card-box animate">
+        <img src="~/images/helpteam.png" alt="Help Team">
+        <p>When the AI receives a "help" command three times, it activates, obtains the user's current location, and sends it to designated contacts, including police and ambulance services, to provide assistance as quickly as possible.</p>
+    </div>
+</div>
+<div class="page-4 "> <iframe src="http://127.0.0.1:5500/" title="3D odel">  </iframe></div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active'); 
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.5 }); 
+        const animateElements = document.querySelectorAll('.animate');
+        animateElements.forEach(element => {
+            observer.observe(element); 
+        });
+    });
+</script>
+

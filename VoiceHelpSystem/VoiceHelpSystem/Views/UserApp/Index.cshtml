@@ -1,0 +1,216 @@
+﻿@model List<UserFamilyInfo>
+
+@{
+    ViewData["Title"] = "Buddy Care - Emergency Helper";
+    Layout = "_userLayout";
+}
+
+<style>
+   
+
+    .bg {
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.2);
+        padding: 30px;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        width: 20%;
+        text-align: center;
+        color: #fff;
+        font-size: 20px;
+    }
+
+    button {
+        background-color: #272829;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+        button:hover {
+            color: #272829;
+            background-color: white;
+        }
+
+</style>
+<div class="bg">
+ 
+<h1>Buddy Care Emergency Helper</h1>
+<p>Click the button and say "Help me" for Help.</p>
+
+<button id="start-btn">Start Listening</button>
+<button id="stop-btn" disabled>Stop Listening</button>
+<p id="status">Status: Waiting...</p>
+
+<div>
+    @foreach (var entry in Model)
+    {
+        <span class="phone-number">@entry.PhoneNumber</span>
+    }
+</div>
+</div>
+
+<script>
+    let recognition;
+    let listening = false;
+    const activationPhrase = "help me";
+    const responsePhrase = "help";
+    const statusElement = document.getElementById("status");
+
+    if ("webkitSpeechRecognition" in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        recognition.onstart = function () {
+            speakText("Say 'Help me' if you need Help.");
+            statusElement.textContent = "Status: Listening...";
+            listening = true;
+        };
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+            statusElement.textContent = `Heard: "${transcript}"`;
+
+            if (transcript.includes(activationPhrase)) {
+                speakText("How can I help you?");
+                waitForConfirmation();
+            }
+        };
+
+        recognition.onerror = function (event) {
+            statusElement.textContent = `Error: ${event.error}`;
+        };
+
+        recognition.onend = function () {
+            listening = false;
+            statusElement.textContent = "Status: Stopped.";
+            document.getElementById("stop-btn").disabled = true;
+            document.getElementById("start-btn").disabled = false;
+        };
+    } else {
+        alert("Speech recognition is not supported in this browser.");
+    }
+
+    document.getElementById("start-btn").addEventListener("click", function () {
+        if (!listening) {
+            recognition.start();
+            document.getElementById("stop-btn").disabled = false;
+            document.getElementById("start-btn").disabled = true;
+        }
+    });
+
+    document.getElementById("stop-btn").addEventListener("click", function () {
+        recognition.stop();
+    });
+
+    function speakText(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function waitForConfirmation() {
+        recognition.onresult = function (event) {
+            const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+            statusElement.textContent = `Heard: "${transcript}"`;
+
+            if (transcript.includes(responsePhrase)) {
+                speakText("Emergency message being sent.");
+                sendEmergencyMessage();
+            }
+        };
+    }
+
+   
+
+    const apiKey = 'AIzaSyAW7QlAeuS5qeeZFIBmiHBq25mobg_dhkU';
+
+    function sendEmergencyMessage() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            
+            function(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+           const message = `Emergency Alert! User needs help. Location: Lat ${latitude}, Lon ${longitude}`;
+           statusElement.textContent = "Emergency message sent.";
+          
+          console.log("Latitude: " + latitude + ", Longitude: " + longitude);
+
+          
+          fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              "homeMobileCountryCode": 310,
+              "homeMobileNetworkCode": 260,
+              "radioType": "gsm",
+              "carrier": "T-Mobile",
+              "considerIp": "true"
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            }
+
+          })
+          .then(response => response.json())
+          .then(data => {
+            
+            document.getElementById('location').innerHTML = `
+              Latitude: ${data.location.lat} <br>
+              Longitude: ${data.location.lng} <br>
+              Accuracy: ${data.accuracy} meters
+            `;
+          })
+          .catch(error => console.error('Error:', error));
+           sendWhatsAppMessage(message);
+
+        }, function(error) {
+          console.error("Error getting location: " + error.message);
+        });
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+      
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function sendWhatsAppMessage(message) {
+        const phoneNumberElement = document.querySelector(".phone-number");
+        if (!phoneNumberElement) {
+            alert("No emergency contact found.");
+            return;
+        }
+
+        const phoneNumber = phoneNumberElement.textContent.replace(/\D/g, "");
+        if (!phoneNumber) {
+            alert("Invalid phone number.");
+            return;
+        }
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+        window.open(whatsappUrl, "_blank");
+    }
+</script>
